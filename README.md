@@ -60,6 +60,6 @@ Develop SQL-based analytics to deliver detailed insights into:
 These insights empower stakeholders with key business metrics, enabling strategic decision-making.
 
 ---
-## About ME
-hi there! I'm **Subramanyam Avula**, an Aspiring Data Engineer passionate about building scalable data pipelines and data warehouse solutions.
+##  🌟 About ME
+Hi there! I'm **Subramanyam Avula**, an Aspiring Data Engineer passionate about building scalable data pipelines and data warehouse solutions.
 Skilled in SQL, Python, Azure, ADF, Databricks, and PySpark, with a focus on transforming data into useful insights.
