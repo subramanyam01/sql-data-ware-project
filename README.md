@@ -32,6 +32,11 @@ These insights empower stakeholders with key business metrics, enabling strategi
 
 ---
 
+### Data Architecture
+The data architecture for this project follows Medallion Architecture Bronze, Silver, and Gold layers:
+<img width="1632" height="964" alt="High Level Data Warehouse Architecture" src="https://github.com/user-attachments/assets/18005e50-1807-4e72-9774-f6d692b27e10" />
+
+
 ## About ME
 hi there! I'm **Subramanyam Avula**, an Aspiring Data Engineer passionate about building scalable data pipelines and data warehouse solutions.
 Skilled in SQL, Python, Azure, ADF, Databricks, and PySpark, with a focus on transforming data into useful insights.
