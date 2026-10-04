@@ -45,7 +45,6 @@ BEGIN
 			cst_gndr,
 			cst_create_date
 		)
-
 		SELECT 
 			cst_id,
 			cst_key,
@@ -60,13 +59,14 @@ BEGIN
 				ELSE 'N/A'
 			END AS cst_gndr, -- NORMALIZE GENDER VALUES TO READABLE FORMAT
 			cst_create_date
-		FROM(
+		FROM (
 			SELECT 
 				*,
 				ROW_NUMBER() OVER(PARTITION BY cst_id ORDER BY cst_create_date desc) AS flag_last
 			FROM  bronze.crm_cust_info
 			WHERE cst_id IS NOT NULL
-		)T WHERE flag_last = 1 -- SELECT THE MOST RECENT RECORD PER CUSTOMER
+		)T 
+		WHERE flag_last = 1 -- SELECT THE MOST RECENT RECORD PER CUSTOMER
 		SET @end_time = GETDATE();
         PRINT '>> Load Duration: ' + CAST(DATEDIFF(SECOND, @start_time, @end_time) AS NVARCHAR) + ' seconds';
         PRINT '>> *************';
@@ -100,8 +100,9 @@ BEGIN
 				 ELSE 'N/A'
 			END AS prd_line, --MAP PRODUCT LINE CODES TO DESCRIPTIVE VALUES
 			CAST(prd_start_dt AS DATE) AS prd_start_dt,
-			CAST(LEAD(prd_start_dt) OVER(PARTITION BY prd_key ORDER BY prd_start_dt)-1 
-			AS DATE
+			CAST(
+				LEAD(prd_start_dt) OVER(PARTITION BY prd_key ORDER BY prd_start_dt)-1 
+				AS DATE
 			) AS prd_end_dt --CALCULATE END DATE AS ONE DAY BEFORE THE NEXT START DATE
 		FROM bronze.crm_prd_info
 		SET @end_time = GETDATE();
@@ -156,7 +157,11 @@ BEGIN
 		PRINT '>> Truncating Table: silver.erp_cust_az12';
 		TRUNCATE TABLE silver.erp_cust_az12;
 		PRINT '>> Insering data Into: silver.erp_cust_az12';
-		INSERT INTO silver.erp_cust_az12 (cid,bdate,gen)
+		INSERT INTO silver.erp_cust_az12 (
+			cid,
+			bdate,
+			gen
+		)
 		SELECT 
 			CASE WHEN cid LIKE 'NAS%' THEN SUBSTRING(cid,4,LEN(cid))-- REMOVE 'NAS' PERFIX IF PRESENT
 				 ELSE cid
@@ -182,14 +187,17 @@ BEGIN
 		PRINT '>> Truncating Table: silver.erp_loc_a101';
 		TRUNCATE TABLE silver.erp_loc_a101;
 		PRINT '>> Insering data Into: silver.erp_loc_a101';
-		INSERT INTO silver.erp_loc_a101 (cid,cntry)
+		INSERT INTO silver.erp_loc_a101 (
+			cid,
+			cntry
+		)
 		SELECT 
-		REPLACE(cid,'-','') AS cid,
-		CASE WHEN TRIM(cntry) = 'DE' THEN 'Germany'
-			 WHEN TRIM(cntry) IN ('US','USA') THEN 'Unites States'
-			 WHEN TRIM(cntry) = '' OR cntry IS NULL THEN 'N/A'
-			 ELSE TRIM(cntry) -- NORMALIZE AND HANDLE MISSING OR BANK COUNTRY CODES
-		END AS cntry
+			REPLACE(cid,'-','') AS cid,
+			CASE WHEN TRIM(cntry) = 'DE' THEN 'Germany'
+			 	WHEN TRIM(cntry) IN ('US','USA') THEN 'Unites States'
+			 	WHEN TRIM(cntry) = '' OR cntry IS NULL THEN 'N/A'
+			 	ELSE TRIM(cntry) -- NORMALIZE AND HANDLE MISSING OR BANK COUNTRY CODES
+			END AS cntry
 		FROM bronze.erp_loc_a101
 		SET @end_time = GETDATE();
         PRINT '>> Load Duration: ' + CAST(DATEDIFF(SECOND, @start_time, @end_time) AS NVARCHAR) + ' seconds';
@@ -200,7 +208,12 @@ BEGIN
 		PRINT '>> Truncating Table: silver.erp_px_cat_g1v2';
 		TRUNCATE TABLE silver.erp_px_cat_g1v2;
 		PRINT '>> Insering data Into: silver.erp_px_cat_g1v2';
-		INSERT INTO silver.erp_px_cat_g1v2(id,cat,subcat,maintenance)
+		INSERT INTO silver.erp_px_cat_g1v2 (
+			id,
+			cat,
+			subcat,
+			maintenance
+		)
 		SELECT 
 			id,
 			cat,
@@ -227,5 +240,3 @@ BEGIN
 		PRINT '=========================================='
 	END CATCH
 END
-
-exec silver.load_silver
