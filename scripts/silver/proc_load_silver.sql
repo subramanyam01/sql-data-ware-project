@@ -43,7 +43,8 @@ BEGIN
 			cst_lastname,
 			cst_marital_status,
 			cst_gndr,
-			cst_create_date)
+			cst_create_date
+		)
 
 		SELECT 
 			cst_id,
